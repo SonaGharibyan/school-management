@@ -17,14 +17,13 @@ module.exports = gql`
     id: Int!
     name: String!
     grade: Int!
-    subjects: [Subject!]
   }
 
   type Subject {
     id: Int!
     name: String!
     teacher: Teacher
-    pupils: [Pupil!]
+    grade: Int!
   }
 
   enum Role {
@@ -47,11 +46,12 @@ module.exports = gql`
   input PupilUpdateInput {
     name: String
     grade: Int
-    subjectIds: [ID!] # Assuming a pupil is assigned to multiple subjects
+    subjectIds: [ID!]
   }
 
   input SubjectUpdateInput {
     name: String
+    grade: Int
     teacherId: ID
   }
 
@@ -60,7 +60,7 @@ module.exports = gql`
     login(email: String!, password: String!): String
     addTeacher(data: TeacherUpdateInput!): Teacher!
     addPupil(name: String!, grade: Int!): Pupil!
-    addSubject(name: String!, teacherId: Int): Subject!
+    addSubject(data: SubjectUpdateInput!): Subject!
     assignSubjectToPupil(pupilId: Int!, subjectId: Int!): Pupil!
 
     updateTeacher(id: ID!, data: TeacherUpdateInput!): Teacher!

@@ -78,10 +78,6 @@ module.exports = {
       // if (user.role !== "ADMIN") throw new Error("Not authorized");
       return prisma.pupil.create({ data: { name, grade } });
     },
-    addSubject: async (_, { name, teacherId }, { prisma, user }) => {
-      // if (user.role !== "ADMIN") throw new Error("Not authorized");
-      return prisma.subject.create({ data: { name, teacherId } });
-    },
     assignSubjectToPupil: async (
       _,
       { pupilId, subjectId },
@@ -131,12 +127,33 @@ module.exports = {
         data: {
           name: data.name,
           grade: data.grade,
-          subjects: {
-            set: data.subjectIds.map((id) => ({ id: Number(id) })),
-          },
         },
       });
       return pupil;
+    },
+    addPupil: async (_, { data }, { prisma }) => {
+      const { name, grade } = data;
+
+      return await prisma.pupil.create({
+        data: {
+          name,
+          grade,
+        },
+      });
+    },
+
+    addSubject: async (_, { data }, { prisma }) => {
+      const { name, grade, teacherId } = data;
+
+      return await prisma.subject.create({
+        data: {
+          name,
+          grade,
+          teacher: {
+            connect: { id: Number(teacherId) },
+          },
+        },
+      });
     },
 
     updateSubject: async (_, { id, data }, { prisma }) => {
@@ -144,6 +161,7 @@ module.exports = {
         where: { id: Number(id) },
         data: {
           name: data.name,
+          grade: data.grade,
           teacher: {
             connect: { id: Number(data.teacherId) },
           },
@@ -153,7 +171,6 @@ module.exports = {
     },
 
     deleteTeacher: async (_, { id }, { prisma }) => {
-      console.log(id);
       const teacher = await prisma.teacher.delete({
         where: { id: Number(id) },
       });

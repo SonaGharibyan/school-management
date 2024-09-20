@@ -19,10 +19,6 @@ export const GET_PUPILS = gql`
       id
       name
       grade
-      subjects {
-        id
-        name
-      }
     }
   }
 `;
@@ -33,10 +29,6 @@ export const GET_SUBJECTS = gql`
       id
       name
       teacher {
-        id
-        name
-      }
-      pupils {
         id
         name
       }

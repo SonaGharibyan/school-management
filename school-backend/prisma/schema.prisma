@@ -24,14 +24,12 @@ model Pupil {
   id       Int      @id @default(autoincrement())
   name     String
   grade    Int
-  subjects Subject[] @relation("PupilSubjects")
 }
 
 model Subject {
-  id         Int        @id @default(autoincrement())
-  name       String
-  teacherId  Int?
-  teacher    Teacher?   @relation("TeacherSubjects", fields: [teacherId], references: [id],  onDelete: Cascade)
-  pupils     Pupil[]    @relation("PupilSubjects")
+  id        Int       @id @default(autoincrement())
+  name      String
+  grade     Int  
+  teacher   Teacher?  @relation("TeacherSubjects", fields: [teacherId], references: [id])
+  teacherId Int?
 }
-

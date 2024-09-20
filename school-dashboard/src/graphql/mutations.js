@@ -48,14 +48,10 @@ export const UPDATE_TEACHER = gql`
 
 export const ADD_PUPIL = gql`
   mutation AddPupil($data: PupilCreateInput!) {
-    createPupil(data: $data) {
+    addPupil(data: $data) {
       id
       name
       grade
-      subjects {
-        id
-        name
-      }
     }
   }
 `;
@@ -66,10 +62,6 @@ export const UPDATE_PUPIL = gql`
       id
       name
       grade
-      subjects {
-        id
-        name
-      }
     }
   }
 `;
@@ -84,10 +76,11 @@ export const DELETE_PUPIL = gql`
 `;
 
 export const ADD_SUBJECT = gql`
-  mutation AddSubject($data: SubjectCreateInput!) {
-    createSubject(data: $data) {
+  mutation AddSubject($data: SubjectUpdateInput!) {
+    addSubject(data: $data) {
       id
       name
+      grade
       teacher {
         id
         name
@@ -101,6 +94,7 @@ export const UPDATE_SUBJECT = gql`
     updateSubject(id: $id, data: $data) {
       id
       name
+      grade
       teacher {
         id
         name

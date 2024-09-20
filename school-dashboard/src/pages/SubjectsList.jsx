@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { DELETE_SUBJECT } from "../graphql/mutations";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { SubjectDialog } from "./SubjectDialog";
 
 const SubjectsList = () => {
   const { data, loading, error } = useQuery(GET_SUBJECTS);
@@ -61,11 +62,11 @@ const SubjectsList = () => {
         ))}
       </List>
 
-      {/* <SubjectDialog
+      <SubjectDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         subject={selectedSubject}
-      /> */}
+      />
     </div>
   );
 };
