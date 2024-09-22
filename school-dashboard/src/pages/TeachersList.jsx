@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_TEACHERS } from "../graphql/queries";
+import { GET_SUBJECTS, GET_TEACHERS } from "../graphql/queries";
 import { TeacherDialog } from "./TeacherDialog";
 import {
   Button,
@@ -20,6 +20,7 @@ import { DELETE_TEACHER } from "../graphql/mutations";
 
 const TeachersList = () => {
   const { data, loading, error, refetch } = useQuery(GET_TEACHERS);
+  const { refetch: refetchSubjects } = useQuery(GET_SUBJECTS);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [deleteTeacher] = useMutation(DELETE_TEACHER);
@@ -66,7 +67,10 @@ const TeachersList = () => {
                   primary={<Typography variant="h6">{teacher.name}</Typography>}
                   secondary={
                     <Typography variant="body2">
-                      Grade: {teacher.grade}
+                      Subject:{" "}
+                      {teacher.subjects
+                        .map((subject) => subject.name)
+                        ?.join(", ")}
                     </Typography>
                   }
                 />
@@ -81,7 +85,10 @@ const TeachersList = () => {
                     color="secondary"
                     onClick={() =>
                       deleteTeacher({ variables: { id: teacher.id } }).then(
-                        () => refetch()
+                        () => {
+                          refetch();
+                          refetchSubjects();
+                        }
                       )
                     }
                   >
@@ -100,6 +107,7 @@ const TeachersList = () => {
         onClose={() => {
           setOpenDialog(false);
           refetch();
+          refetchSubjects();
         }}
         teacher={selectedTeacher}
       />

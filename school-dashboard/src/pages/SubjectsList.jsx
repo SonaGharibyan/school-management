@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_SUBJECTS } from "../graphql/queries";
+import { GET_SUBJECTS, GET_TEACHERS } from "../graphql/queries";
 import { SubjectDialog } from "./SubjectDialog";
 import {
   Button,
@@ -23,6 +23,7 @@ const SubjectsList = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [deleteSubject] = useMutation(DELETE_SUBJECT);
+  const { refetch: refetchTeachers } = useQuery(GET_TEACHERS);
 
   if (loading) return <Typography>Loading...</Typography>;
   if (error)
@@ -81,7 +82,10 @@ const SubjectsList = () => {
                     color="secondary"
                     onClick={() =>
                       deleteSubject({ variables: { id: subject.id } }).then(
-                        () => refetch()
+                        () => {
+                          refetch();
+                          refetchTeachers();
+                        }
                       )
                     }
                   >
@@ -100,6 +104,7 @@ const SubjectsList = () => {
         onClose={() => {
           setOpenDialog(false);
           refetch();
+          refetchTeachers();
         }}
         subject={selectedSubject}
       />
