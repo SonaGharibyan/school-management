@@ -16,7 +16,7 @@ const Login = () => {
       const { data } = await login({ variables: { email, password } });
 
       localStorage.setItem("token", data.login);
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
     }

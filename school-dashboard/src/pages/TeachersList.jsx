@@ -10,14 +10,13 @@ import {
   ListItemText,
   Typography,
   Container,
-  Grid,
   Box,
   Divider,
 } from "@mui/material";
-import { DELETE_TEACHER } from "../graphql/mutations";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import { DELETE_TEACHER } from "../graphql/mutations";
 
 const TeachersList = () => {
   const { data, loading, error, refetch } = useQuery(GET_TEACHERS);
@@ -57,23 +56,21 @@ const TeachersList = () => {
         {data.teachers.map((teacher) => (
           <div key={teacher.id}>
             <ListItem>
-              <Grid container alignItems="center" spacing={2}>
-                <Grid item xs={8}>
-                  <ListItemText
-                    primary={
-                      <Typography variant="h6">{teacher.name}</Typography>
-                    }
-                    secondary={
-                      <Typography variant="body2">
-                        Subjects:{" "}
-                        {teacher.subjects
-                          ?.map((subject) => subject.name)
-                          .join(", ")}
-                      </Typography>
-                    }
-                  />
-                </Grid>
-                <Grid item xs={4} display="flex" justifyContent="flex-end">
+              <Box
+                display="flex"
+                width="100%"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <ListItemText
+                  primary={<Typography variant="h6">{teacher.name}</Typography>}
+                  secondary={
+                    <Typography variant="body2">
+                      Grade: {teacher.grade}
+                    </Typography>
+                  }
+                />
+                <Box>
                   <IconButton
                     color="primary"
                     onClick={() => handleEditClick(teacher)}
@@ -90,8 +87,8 @@ const TeachersList = () => {
                   >
                     <DeleteIcon />
                   </IconButton>
-                </Grid>
-              </Grid>
+                </Box>
+              </Box>
             </ListItem>
             <Divider variant="middle" />
           </div>
