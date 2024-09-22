@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_SUBJECTS, GET_TEACHERS } from "../graphql/queries";
+import { GET_SUBJECTS } from "../graphql/queries";
 // import { SubjectDialog } from "./SubjectDialog";
 import {
   Button,
@@ -14,7 +14,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { SubjectDialog } from "./SubjectDialog";
 
 const SubjectsList = () => {
-  const { data, loading, error } = useQuery(GET_SUBJECTS);
+  const { data, loading, error, refetch } = useQuery(GET_SUBJECTS);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [deleteSubject] = useMutation(DELETE_SUBJECT);
@@ -48,7 +48,9 @@ const SubjectsList = () => {
                   edge="end"
                   aria-label="delete"
                   onClick={() =>
-                    deleteSubject({ variables: { id: subject.id } })
+                    deleteSubject({ variables: { id: subject.id } }).then(() =>
+                      refetch()
+                    )
                   }
                 >
                   <DeleteIcon />
@@ -57,14 +59,23 @@ const SubjectsList = () => {
               </>
             }
           >
-            <ListItemText primary={subject.name} />
+            <ListItemText
+              primary={subject.name}
+              secondary={
+                <>{`Grade: ${subject.grade}     Teacher: ${subject.teacher?.name}`}</>
+              }
+            />
           </ListItem>
         ))}
       </List>
 
       <SubjectDialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        onClose={() => {
+          setSelectedSubject(null);
+          setOpenDialog(false);
+          refetch();
+        }}
         subject={selectedSubject}
       />
     </div>

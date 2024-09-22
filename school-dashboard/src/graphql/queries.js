@@ -28,6 +28,7 @@ export const GET_SUBJECTS = gql`
     subjects {
       id
       name
+      grade
       teacher {
         id
         name

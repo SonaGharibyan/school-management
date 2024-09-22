@@ -23,6 +23,7 @@ module.exports = gql`
     id: Int!
     name: String!
     teacher: Teacher
+    teacherId: String
     grade: Int!
   }
 
@@ -59,7 +60,7 @@ module.exports = gql`
     signup(email: String!, password: String!, role: String!): String
     login(email: String!, password: String!): String
     addTeacher(data: TeacherUpdateInput!): Teacher!
-    addPupil(name: String!, grade: Int!): Pupil!
+    addPupil(data: PupilUpdateInput!): Pupil!
     addSubject(data: SubjectUpdateInput!): Subject!
     assignSubjectToPupil(pupilId: Int!, subjectId: Int!): Pupil!
 

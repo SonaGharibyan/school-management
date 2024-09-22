@@ -13,7 +13,7 @@ import { DELETE_TEACHER } from "../graphql/mutations";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const TeachersList = () => {
-  const { data, loading, error } = useQuery(GET_TEACHERS);
+  const { data, loading, error, refetch } = useQuery(GET_TEACHERS);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [deleteTeacher] = useMutation(DELETE_TEACHER);
@@ -47,7 +47,9 @@ const TeachersList = () => {
                   edge="end"
                   aria-label="delete"
                   onClick={() =>
-                    deleteTeacher({ variables: { id: teacher.id } })
+                    deleteTeacher({ variables: { id: teacher.id } }).then(() =>
+                      refetch()
+                    )
                   }
                 >
                   <DeleteIcon />
@@ -56,14 +58,22 @@ const TeachersList = () => {
               </>
             }
           >
-            <ListItemText primary={teacher.name} />
+            <ListItemText
+              primary={teacher.name}
+              secondary={`Subjects: ${teacher.subjects?.map(
+                (subject) => subject.name
+              )}`}
+            />
           </ListItem>
         ))}
       </List>
 
       <TeacherDialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        onClose={() => {
+          setOpenDialog(false);
+          refetch();
+        }}
         teacher={selectedTeacher}
       />
     </div>

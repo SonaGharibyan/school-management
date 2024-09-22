@@ -47,7 +47,7 @@ export const UPDATE_TEACHER = gql`
 `;
 
 export const ADD_PUPIL = gql`
-  mutation AddPupil($data: PupilCreateInput!) {
+  mutation AddPupil($data: PupilUpdateInput!) {
     addPupil(data: $data) {
       id
       name

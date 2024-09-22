@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { GET_TEACHERS } from "../graphql/queries";
 
-const SubjectDialog = ({ open, onClose, subject, isEditMode }) => {
+const SubjectDialog = ({ open, onClose, subject }) => {
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
   const [selectedTeacher, setSelectedTeacher] = useState("");
@@ -25,22 +25,22 @@ const SubjectDialog = ({ open, onClose, subject, isEditMode }) => {
   const [updateSubject] = useMutation(UPDATE_SUBJECT);
 
   useEffect(() => {
-    if (isEditMode && subject) {
+    if (subject?.id) {
       setName(subject.name);
       setGrade(subject.grade);
       setSelectedTeacher(subject.teacher?.id);
     }
-  }, [isEditMode, subject]);
-  console.log(selectedTeacher);
+  }, [subject]);
 
   const handleSubmit = async () => {
-    if (isEditMode) {
+    if (subject?.id) {
       await updateSubject({
         variables: {
           id: subject.id,
           data: {
             name,
             grade: parseInt(grade),
+            teacherId: selectedTeacher,
           },
         },
       });
@@ -61,7 +61,7 @@ const SubjectDialog = ({ open, onClose, subject, isEditMode }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>
-        {isEditMode ? "Update Subject" : "Create Subject"}
+        {subject?.id ? "Update Subject" : "Create Subject"}
       </DialogTitle>
       <DialogContent>
         <TextField
@@ -101,7 +101,7 @@ const SubjectDialog = ({ open, onClose, subject, isEditMode }) => {
           Cancel
         </Button>
         <Button onClick={handleSubmit} color="primary">
-          {isEditMode ? "Update" : "Create"}
+          {subject?.id ? "Update" : "Create"}
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_PUPILS } from "../graphql/queries";
-// import { PupilDialog } from "./PupilDialog";
+import { PupilDialog } from "./PupilDialog";
 import {
   Button,
   IconButton,
@@ -13,7 +13,7 @@ import { DELETE_PUPIL } from "../graphql/mutations";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const PupilsList = () => {
-  const { data, loading, error } = useQuery(GET_PUPILS);
+  const { data, loading, error, refetch } = useQuery(GET_PUPILS);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPupil, setSelectedPupil] = useState(null);
   const [deletePupil] = useMutation(DELETE_PUPIL);
@@ -46,7 +46,11 @@ const PupilsList = () => {
                 <IconButton
                   edge="end"
                   aria-label="delete"
-                  onClick={() => deletePupil({ variables: { id: pupil.id } })}
+                  onClick={() =>
+                    deletePupil({ variables: { id: pupil.id } }).then(() =>
+                      refetch()
+                    )
+                  }
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -54,16 +58,22 @@ const PupilsList = () => {
               </>
             }
           >
-            <ListItemText primary={pupil.name} />
+            <ListItemText
+              primary={pupil.name}
+              secondary={`Grade: ${pupil.grade}`}
+            />
           </ListItem>
         ))}
       </List>
 
-      {/* <PupilDialog
+      <PupilDialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        onClose={() => {
+          setOpenDialog(false);
+          refetch();
+        }}
         pupil={selectedPupil}
-      /> */}
+      />
     </div>
   );
 };

@@ -4,12 +4,21 @@ const jwt = require("jsonwebtoken");
 module.exports = {
   Query: {
     teachers: async (_, __, { prisma, user }) => {
-      if (user.role !== "ADMIN") throw new Error("Not authorized");
+      // if (user.role !== "ADMIN") throw new Error("Not authorized");
 
-      return prisma.teacher.findMany();
+      return prisma.teacher.findMany({
+        include: {
+          subjects: true,
+        },
+      });
     },
     pupils: async (_, __, { prisma }) => prisma.pupil.findMany(),
-    subjects: async (_, __, { prisma }) => prisma.subject.findMany(),
+    subjects: async (_, __, { prisma }) =>
+      prisma.subject.findMany({
+        include: {
+          teacher: true,
+        },
+      }),
   },
   Mutation: {
     async signup(_, { password, email, role }, { prisma }) {
@@ -74,10 +83,6 @@ module.exports = {
       });
     },
 
-    addPupil: async (_, { name, grade }, { prisma, user }) => {
-      // if (user.role !== "ADMIN") throw new Error("Not authorized");
-      return prisma.pupil.create({ data: { name, grade } });
-    },
     assignSubjectToPupil: async (
       _,
       { pupilId, subjectId },
@@ -144,14 +149,16 @@ module.exports = {
 
     addSubject: async (_, { data }, { prisma }) => {
       const { name, grade, teacherId } = data;
+      console.log(data);
 
-      return await prisma.subject.create({
+      return prisma.subject.create({
         data: {
           name,
           grade,
-          teacher: {
-            connect: { id: Number(teacherId) },
-          },
+          // teacher: {
+          //   connect: { id: Number(teacherId) },
+          // },
+          teacherId: Number(teacherId),
         },
       });
     },

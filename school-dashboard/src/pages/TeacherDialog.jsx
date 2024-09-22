@@ -78,7 +78,6 @@ const TeacherDialog = ({ open, onClose, teacher }) => {
             onChange={handleSubjectsChange}
             renderValue={(selected) => {
               return subjectsData?.subjects
-                .filter((subject) => selected.includes(subject.id))
                 .map((subject) => subject.name)
                 .join(", ");
             }}
