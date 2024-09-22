@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_SUBJECTS } from "../graphql/queries";
-// import { SubjectDialog } from "./SubjectDialog";
+import { SubjectDialog } from "./SubjectDialog";
 import {
   Button,
   IconButton,
   List,
   ListItem,
   ListItemText,
+  Typography,
+  Container,
+  Box,
+  Divider,
 } from "@mui/material";
-import { DELETE_SUBJECT } from "../graphql/mutations";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { SubjectDialog } from "./SubjectDialog";
+import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
+import { DELETE_SUBJECT } from "../graphql/mutations";
 
 const SubjectsList = () => {
   const { data, loading, error, refetch } = useQuery(GET_SUBJECTS);
@@ -19,8 +24,9 @@ const SubjectsList = () => {
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [deleteSubject] = useMutation(DELETE_SUBJECT);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) return <Typography>Loading...</Typography>;
+  if (error)
+    return <Typography color="error">Error: {error.message}</Typography>;
 
   const handleEditClick = (subject) => {
     setSelectedSubject(subject);
@@ -33,52 +39,71 @@ const SubjectsList = () => {
   };
 
   return (
-    <div>
-      <h2>Subjects List</h2>
-      <Button variant="contained" color="primary" onClick={handleCreateClick}>
-        Create Subject
-      </Button>
+    <Container maxWidth="md">
+      <Box mt={4} mb={2} display="flex" justifyContent="space-between">
+        <Typography variant="h4">Subjects List</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleCreateClick}
+        >
+          Create Subject
+        </Button>
+      </Box>
+
       <List>
         {data.subjects.map((subject) => (
-          <ListItem
-            key={subject.id}
-            secondaryAction={
-              <>
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() =>
-                    deleteSubject({ variables: { id: subject.id } }).then(() =>
-                      refetch()
-                    )
+          <div key={subject.id}>
+            <ListItem>
+              <Box
+                display="flex"
+                width="100%"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <ListItemText
+                  primary={<Typography variant="h6">{subject.name}</Typography>}
+                  secondary={
+                    <Typography variant="body2">
+                      Grade: {subject.grade} Teacher: {subject.teacher?.name}
+                    </Typography>
                   }
-                >
-                  <DeleteIcon />
-                </IconButton>
-                <Button onClick={() => handleEditClick(subject)}>Edit</Button>
-              </>
-            }
-          >
-            <ListItemText
-              primary={subject.name}
-              secondary={
-                <>{`Grade: ${subject.grade}     Teacher: ${subject.teacher?.name}`}</>
-              }
-            />
-          </ListItem>
+                />
+                <Box>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleEditClick(subject)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    color="secondary"
+                    onClick={() =>
+                      deleteSubject({ variables: { id: subject.id } }).then(
+                        () => refetch()
+                      )
+                    }
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            </ListItem>
+            <Divider variant="middle" />
+          </div>
         ))}
       </List>
 
       <SubjectDialog
         open={openDialog}
         onClose={() => {
-          setSelectedSubject(null);
           setOpenDialog(false);
           refetch();
         }}
         subject={selectedSubject}
       />
-    </div>
+    </Container>
   );
 };
 
